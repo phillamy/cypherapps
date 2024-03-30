@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  nostr_client:
+    image: cyphernode/nostr_client:0.1
+    volumes:
+      - "$APP_SCRIPT_PATH/data:/home/nostr_client/data"
+    networks:
+      - cyphernodeappsnet
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=cyphernodeappsnet
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=cyphernodeappsnet
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.io.cyphernode == true
+      restart_policy:
+        condition: "any"
+        delay: 1s
+      update_config:
+        parallelism: 1
+
+networks:
+  cyphernodeappsnet:
+    external: true
